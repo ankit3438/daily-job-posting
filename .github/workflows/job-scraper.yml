@@ -1,0 +1,33 @@
+name: Job Scraper - 3x Daily
+
+on:
+  schedule:
+    # Run at 9:30 AM, 2:30 PM, and 6:00 PM IST
+    - cron: '0 3 * * *'      # 9:30 AM IST
+    - cron: '0 8 * * *'      # 2:30 PM IST
+    - cron: '0 12 * * *'     # 6:00 PM IST
+
+jobs:
+  scrape-jobs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 python-dotenv
+
+      - name: Run Job Scraper
+        env:
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+        run: python JobScrapper.py
